@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Search, Grid, List, ExternalLink, Gamepad2, ArrowLeft, X, Play, Loader2 } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Search, Grid, List, Maximize, ExternalLink, Gamepad2, ArrowLeft, X, Play, Loader2 } from 'lucide-react';
 import { fetchGames, Game } from '../data/games';
 
 interface GamesPageProps {
@@ -13,9 +13,12 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [gameHtml, setGameHtml] = useState<string | null>(null);
+  const [gameLoading, setGameLoading] = useState(false);
   const [gamesPerRow] = useState(5);
   const [showGameNames] = useState(true);
   const [sortBy, setSortBy] = useState<'name' | 'id'>('id');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     async function loadGames() {
@@ -31,6 +34,18 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
     }
     loadGames();
   }, []);
+
+  useEffect(() => {
+    if (iframeRef.current && gameHtml) {
+      const iframe = iframeRef.current;
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (doc) {
+        doc.open();
+        doc.write(gameHtml);
+        doc.close();
+      }
+    }
+  }, [gameHtml]);
 
   const sortedGames = useMemo(() => {
     const sorted = [...games];
@@ -65,10 +80,41 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
 
   const playGame = async (game: Game) => {
     setSelectedGame(game);
+    setGameLoading(true);
+    setGameHtml(null);
+    try {
+      const response = await fetch(game.gameUrl);
+      const html = await response.text();
+      setGameHtml(html);
+    } catch (err) {
+      console.error('Failed to load game:', err);
+    } finally {
+      setGameLoading(false);
+    }
   };
 
   const closeGame = () => {
     setSelectedGame(null);
+    setGameHtml(null);
+  };
+
+  const enterFullscreen = () => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    const el: any = iframe;
+    if (el.requestFullscreen) {
+      el.requestFullscreen();
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    } else if (el.msRequestFullscreen) {
+      el.msRequestFullscreen();
+    }
+  };
+
+  const openInNewTab = () => {
+    if (selectedGame) {
+      window.open(selectedGame.gameUrl, '_blank');
+    }
   };
 
   if (selectedGame) {
@@ -83,26 +129,44 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
               <ArrowLeft className="w-4 h-4" />
               Back to Games
             </button>
-            <span className="text-lg font-semibold text-[#f0f0f5]">{selectedGame.name}</span>
+            <span className="text-lg font-semibold text-[#f0f0f5] truncate">{selectedGame.name}</span>
             {selectedGame.author && (
-              <span className="text-sm text-[#6b6b7a]">by {selectedGame.author}</span>
+              <span className="text-sm text-[#6b6b7a] hidden sm:inline">by {selectedGame.author}</span>
             )}
           </div>
-          <a
-            href={selectedGame.gameUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#60a5fa] transition-all duration-300"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Open in New Tab
-          </a>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#6b6b7a] hidden lg:inline mr-2">
+              If the game doesn't work, try opening it in a new tab
+            </span>
+            <button
+              onClick={openInNewTab}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a26] border border-[#2a2a3a] text-[#a0a0b0] hover:text-[#f0f0f5] hover:bg-[#1f1f2e] transition-all duration-300"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span className="hidden sm:inline">Open in New Tab</span>
+            </button>
+            <button
+              onClick={enterFullscreen}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#60a5fa] transition-all duration-300"
+            >
+              <Maximize className="w-4 h-4" />
+              <span className="hidden sm:inline">Fullscreen</span>
+            </button>
+          </div>
         </div>
+        {gameLoading && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <Loader2 className="w-12 h-12 text-[#3b82f6] animate-spin" />
+              <p className="text-[#a0a0b0]">Loading game...</p>
+            </div>
+          </div>
+        )}
         <iframe
-          src={selectedGame.gameUrl}
+          ref={iframeRef}
+          src="about:blank"
           className="flex-1 w-full border-0"
           title={selectedGame.name}
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
         />
       </div>
     );
@@ -118,7 +182,7 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
               <Gamepad2 className="w-5 h-5 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-[#f0f0f5]">
-              gn-math <span className="bg-gradient-to-r from-[#3b82f6] to-[#60a5fa] bg-clip-text text-transparent">Games</span>
+              Forge <span className="bg-gradient-to-r from-[#3b82f6] to-[#60a5fa] bg-clip-text text-transparent">Games</span>
             </h1>
           </div>
           <p className="text-[#a0a0b0] ml-13">
@@ -184,7 +248,7 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 text-[#3b82f6] animate-spin mb-4" />
-            <p className="text-[#a0a0b0]">Loading games from gn-math...</p>
+            <p className="text-[#a0a0b0]">Loading games...</p>
           </div>
         )}
 
@@ -218,7 +282,7 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                   onError={(e) => {
-                    e.currentTarget.src = 'https://cdn.jsdelivr.net/gh/gn-math/covers@main/0.png';
+                    e.currentTarget.src = '/images/forge.png';
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -250,7 +314,7 @@ export function GamesPage({ games: initialGames }: GamesPageProps) {
                   className="w-16 h-20 rounded-lg object-cover flex-shrink-0"
                   loading="lazy"
                   onError={(e) => {
-                    e.currentTarget.src = 'https://cdn.jsdelivr.net/gh/gn-math/covers@main/0.png';
+                    e.currentTarget.src = '/images/forge.png';
                   }}
                 />
                 <div className="flex-1 min-w-0">

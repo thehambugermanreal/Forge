@@ -29,9 +29,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
   ];
 
   const stats = [
-    { label: 'Games', value: '800+' },
-    { label: 'Categories', value: '10+' },
-    { label: 'Players', value: '50K+' },
+    { label: 'Games', value: '200+' },
   ];
 
   return (
@@ -81,7 +79,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
 
           {/* Stats */}
-          <div className="mt-20 grid grid-cols-3 gap-8 max-w-xl mx-auto animate-fadeIn stagger-2">
+          <div className="mt-20 flex justify-center animate-fadeIn stagger-2">
             {stats.map((stat, idx) => (
               <div key={idx} className="text-center">
                 <div className="text-3xl sm:text-4xl font-bold gradient-text">{stat.value}</div>

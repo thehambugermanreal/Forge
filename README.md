@@ -15,7 +15,7 @@ This project requires a backend (e.g., Netlify Functions, Vercel Serverless Func
 
 ## About Forge
 
-Forge is a platform with over **600+ games**, dynamically fetched using `gn math` and `jsdelivr`.
+Forge is a platform with over **200+ games**, dynamically fetched using `gn math` and `jsdelivr`.
 
 It features an aesthetic UI, with more updates and improvements coming soon.
 

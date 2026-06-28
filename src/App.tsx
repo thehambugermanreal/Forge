@@ -4,6 +4,7 @@ import { Navigation } from './components/Navigation';
 import { HomePage } from './components/HomePage';
 import { GamesPage } from './components/GamesPage';
 import { SettingsPage } from './components/SettingsPage';
+import { DiscordPopup } from './components/DiscordPopup';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -24,6 +25,7 @@ function App() {
   return (
     <SettingsProvider>
       <div className="min-h-screen bg-[var(--bg-primary)]">
+        <DiscordPopup />
         <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
         <main>
           {renderPage()}
