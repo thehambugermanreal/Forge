@@ -1,0 +1,14 @@
+[
+  {
+    "id": "animal-crossing",
+    "name": "Animal Crossing",
+    "coverUrl": "/games/covers/animal-crossing-link.txt",
+    "gameUrl": "/games/html/animal-crossing.html"
+  },
+  {
+    "id": "crazy-cattle-3d",
+    "name": "Crazy Cattle 3D",
+    "coverUrl": "/games/covers/crazy-cattle-3d.png",
+    "gameUrl": "/games/html/crazy-cattle-3d.html"
+  }
+]
