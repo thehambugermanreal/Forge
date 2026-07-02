@@ -5,6 +5,7 @@ import { HomePage } from './components/HomePage';
 import { GamesPage } from './components/GamesPage';
 import { SettingsPage } from './components/SettingsPage';
 import { DiscordPopup } from './components/DiscordPopup';
+import { ProxyPage } from './components/ProxyPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -15,6 +16,8 @@ function App() {
         return <HomePage onNavigate={setCurrentPage} />;
       case 'games':
         return <GamesPage games={[]} />;
+      case 'proxy':
+        return <ProxyPage />;
       case 'settings':
         return <SettingsPage />;
       default:

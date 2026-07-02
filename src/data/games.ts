@@ -6,6 +6,7 @@ export interface Game {
   coverUrl: string;
   gameUrl: string;
   featured?: boolean;
+  special?: string[];
 }
 
 let cachedGames: Game[] | null = null;
@@ -24,10 +25,11 @@ export async function fetchGames(): Promise<Game[]> {
       authorLink: game.authorLink,
       coverUrl: game.coverUrl || game.cover,
       gameUrl: game.gameUrl || game.url,
-      featured: game.featured
+      featured: game.featured,
+      special: game.special
     }));
 
-    return cachedGames;
+    return cachedGames ?? [];
   } catch (error) {
     console.error('Failed to fetch games:', error);
     return [];

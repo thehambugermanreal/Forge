@@ -1,4 +1,4 @@
-import { Home, Gamepad2, Settings } from 'lucide-react';
+import { Home, Gamepad2, Settings, Globe } from 'lucide-react';
 
 interface NavigationProps {
   currentPage: string;
@@ -9,6 +9,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'games', label: 'Games', icon: Gamepad2 },
+    { id: 'proxy', label: 'Proxy', icon: Globe },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

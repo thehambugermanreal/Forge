@@ -4,18 +4,14 @@ interface Settings {
   accentColor: string;
   accentGlow: string;
   animationsEnabled: boolean;
-  compactMode: boolean;
   showGameNames: boolean;
-  gamesPerRow: number;
 }
 
 const defaultSettings: Settings = {
   accentColor: '#3b82f6',
   accentGlow: 'rgba(59, 130, 246, 0.3)',
   animationsEnabled: true,
-  compactMode: false,
   showGameNames: true,
-  gamesPerRow: 5,
 };
 
 const accentColors: Record<string, { color: string; glow: string; name: string }> = {

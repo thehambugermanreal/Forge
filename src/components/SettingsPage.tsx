@@ -1,4 +1,4 @@
-import { Palette, Monitor, Sparkles, Layout, RotateCcw, Check, Info } from 'lucide-react';
+import { Palette, Monitor, Sparkles, RotateCcw, Check, Info } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 
 export function SettingsPage() {
@@ -9,9 +9,7 @@ export function SettingsPage() {
       accentColor: '#3b82f6',
       accentGlow: 'rgba(59, 130, 246, 0.3)',
       animationsEnabled: true,
-      compactMode: false,
       showGameNames: true,
-      gamesPerRow: 5,
     });
   };
 
@@ -115,31 +113,6 @@ export function SettingsPage() {
                 </button>
               </div>
 
-              {/* Compact Mode Toggle */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Layout className="w-4 h-4 text-[var(--text-muted)]" />
-                  <div>
-                    <label className="text-sm font-medium text-[var(--text-primary)]">Compact Mode</label>
-                    <p className="text-xs text-[var(--text-muted)]">Reduce padding and spacing</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => updateSettings({ compactMode: !settings.compactMode })}
-                  className={`relative w-12 h-7 rounded-full transition-all duration-300 ${
-                    settings.compactMode
-                      ? 'bg-[var(--accent-primary)]'
-                      : 'bg-[var(--bg-tertiary)]'
-                  }`}
-                >
-                  <div
-                    className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all duration-300 ${
-                      settings.compactMode ? 'left-6' : 'left-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
               {/* Show Game Names Toggle */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -163,32 +136,6 @@ export function SettingsPage() {
                     }`}
                   />
                 </button>
-              </div>
-
-              {/* Games Per Row */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Layout className="w-4 h-4 text-[var(--text-muted)]" />
-                  <div>
-                    <label className="text-sm font-medium text-[var(--text-primary)]">Games Per Row</label>
-                    <p className="text-xs text-[var(--text-muted)]">Adjust the grid layout density</p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  {[3, 4, 5, 6].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => updateSettings({ gamesPerRow: num })}
-                      className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
-                        settings.gamesPerRow === num
-                          ? 'bg-[var(--accent-primary)] text-white'
-                          : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]'
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
