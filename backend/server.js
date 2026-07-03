@@ -2,6 +2,12 @@ import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import cors from 'cors';
 import { JSDOM } from 'jsdom';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const isProduction = process.env.NODE_ENV === 'production' || !fs.existsSync(path.join(__dirname, '../vite.config.ts'));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -344,11 +350,30 @@ app.get('/api/stats', (_req, res) => {
 // ── Boot ──────────────────────────────────────────────────────────────────────
 async function startServer() {
   log('BOOT', `${c.cyan}Starting Forge backend...${c.reset}`);
+  log('BOOT', `${c.dim}Mode: ${isProduction ? 'production' : 'development'}${c.reset}`);
 
-  const vite = await createViteServer({ server: { middlewareMode: true }, appType: 'spa' });
-  app.use(vite.middlewares);
+  if (isProduction) {
+    // Production: serve static files from dist/
+    const distPath = path.join(__dirname, '../dist');
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      log('BOOT', `${c.dim}Serving static files from ${distPath}${c.reset}`);
 
-  app.listen(PORT, () => {
+      // SPA fallback - serve index.html for client-side routes
+      app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api/') || req.path.startsWith('/proxy/') || req.path.startsWith('/bare/')) {
+          return next();
+        }
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+    }
+  } else {
+    // Development: use Vite middleware
+    const vite = await createViteServer({ server: { middlewareMode: true }, appType: 'spa' });
+    app.use(vite.middlewares);
+  }
+
+  app.listen(PORT, '0.0.0.0', () => {
     console.log('');
     console.log(`  ${c.bold}${c.cyan}⚡ Forge Proxy Server${c.reset}`);
     console.log(`  ${c.dim}${'─'.repeat(42)}${c.reset}`);

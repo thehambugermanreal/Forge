@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 
 const DEFAULT_PROXY_URL = 'https://duckduckgo.com';
+// Backend URL for production - in dev, Vite proxy handles routing
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 function isSearchQuery(str: string): boolean {
   const trimmed = str.trim();
@@ -58,7 +60,7 @@ export function ProxyPage() {
 
       // Step 1 — verify backend health
       try {
-        const health = await fetch('/api/health');
+        const health = await fetch(`${BACKEND_URL}/api/health`);
         if (health.ok) {
           const data = await health.json();
           pushLog(`Backend OK  uptime ${Math.round(data.uptime)}s`);
@@ -144,8 +146,8 @@ export function ProxyPage() {
     setHistoryIndex(prev => prev + 1);
 
     try {
-      // Ask backend to encode the URL — backend returns the scramjet-prefix path
-      const res = await fetch('/api/proxy', {
+      // Ask backend to encode the URL — backend returns the proxy path
+      const res = await fetch(`${BACKEND_URL}/api/proxy`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: finalUrl }),
@@ -158,17 +160,17 @@ export function ProxyPage() {
       const iframe = iframeRef.current;
       if (!iframe) throw new Error('Browser frame not ready');
 
-      // Point the iframe src at the scramjet proxy path — service worker handles the rest
-      iframe.src = proxyUrl;
+      // Point the iframe src at the proxy path
+      iframe.src = BACKEND_URL ? `${BACKEND_URL}${proxyUrl}` : proxyUrl;
       setLoading(false);
     } catch (err) {
       // Fallback: encode client-side and navigate directly
       try {
         const encoded = encodeUrl(finalUrl);
-        const proxyUrl = `/proxy/${encoded}`;
+        const proxyPath = `/proxy/${encoded}`;
         const iframe = iframeRef.current;
         if (iframe) {
-          iframe.src = proxyUrl;
+          iframe.src = BACKEND_URL ? `${BACKEND_URL}${proxyPath}` : proxyPath;
           setLoading(false);
           return;
         }

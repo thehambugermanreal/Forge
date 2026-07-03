@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: vite-react-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node backend/server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
