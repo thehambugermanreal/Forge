@@ -1,13 +1,11 @@
-![Forge Logo](public/images/logo.png)
 
 # Forge
 
 ## Deploy
 
-⚠️ Static site deployment is not supported.  
-This project requires a backend (e.g., Netlify Functions, Vercel Serverless Functions, Cloudflare Pages Functions, etc.).
+[![Deploy to Vercel](https://binbashbanana.github.io/deploy-buttons/buttons/remade/vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/thehambugermanreal/Forge)
 
-[![View Project in Bolt](public/images/bolt-deploy-button.png)](https://bolt.new/p/68140465)
+**IN .ENV PUT https://vite-react-backend.onrender.com**
 
 **Live Site:** https://forge-study.bolt.host
 
