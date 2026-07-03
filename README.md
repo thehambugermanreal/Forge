@@ -3,7 +3,7 @@
 
 ## Deploy
 
-[![Deploy to Vercel](https://binbashbanana.github.io/deploy-buttons/buttons/remade/vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/thehambugermanreal/Forge)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/thehambugermanreal/Forge/)   
 
 **IN .ENV PUT https://vite-react-backend.onrender.com**
 
